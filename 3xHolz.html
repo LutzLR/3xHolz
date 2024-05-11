@@ -1,0 +1,248 @@
+ <!DOCTYPE html>
+<html lang="de">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>3xHolz</title>
+
+  <style>
+  body {
+   font-family: Verdana, Arial, Sans-Serif;
+   font-size: 1rem;
+   text-shadow: 1px 1px 1px #FFFFFF;
+   background: linear-gradient(#D1D1D1 1%, #FFFFFF 50%, #D1D1D1);
+  }
+
+  /* Tabelle */
+  table#tabelle {
+   background-color: rgb(252, 217, 179);
+   box-shadow: inset 0px 0px 25px 3px rgb(252, 217, 179), 0px 0px 3px 0px rgb(252, 217, 179);
+   border-radius: 1px;
+   border: Solid 2px rgb(252, 217, 179);
+   padding: 5px;
+   margin: Auto;
+   margin-top: 25px;
+   cursor: Default;
+  }
+
+  table#tabelle td,
+  table#tabelle th {
+   padding: 5px;
+  }
+
+  table#tabelle th {
+   font-weight: Normal;
+  }
+
+  /* Formular */
+  form {
+   white-space: Nowrap;
+  }
+
+  input.eingabe {
+   width: 40px;
+   font-size: 1rem;
+   color: rgb(20, 104, 188);
+   padding-left: 15px;
+   letter-spacing: 2px;
+  }
+
+  input#alarm {
+   font-size: 2rem;
+   color: rgb(20, 104, 188);
+   letter-spacing: 2px;
+   padding-left: 15px;
+   width: 263px;
+  }
+
+  label,
+  input[type="button"] {
+   cursor: Pointer;
+  }
+
+  input[type="button"],
+  input[type="text"] {
+   border: Solid 1px rgb(20, 109, 199);
+   letter-spacing: 2px;
+   transition: box-shadow 0.3s;
+  }
+
+  input[type="text"]:invalid {
+   background-color: #FFDBDB;
+  }
+
+  input[type="button"] {
+   padding: 2px 4px 2px 4px;
+   background-color: rgb(222, 236, 252);
+   transition: background-color 0.4s;
+  }
+
+  input[type="button"]:hover {
+   background-color: rgb(202, 225, 251);
+  }
+
+
+  input[type="button"]:focus,
+  input[type="text"]:focus {
+   border:0; outline:0; /* Chromium */
+   border: Solid 1px rgb(34,132,230);
+   box-shadow: 0px 0px 3px 0px rgb(34,132,230);
+  }
+
+  input[readonly="readonly"],
+  input[readonly="readonly"]:focus {
+   width: 40px;
+   font-size: 1rem;
+   background: transparent;
+   border: Solid 1px rgb(20, 109, 199);
+   box-shadow: None;
+   padding-left: 15px;
+   cursor: Default;
+  }
+
+  input[type="radio"]:checked + label {
+   color: rgb(21, 113, 204);
+  }
+
+  /* Animation: Lichter */
+  .LichterStart {
+   animation:Lichter 1.7s infinite;
+  }
+
+  @keyframes Lichter {
+   0% {
+    box-shadow: 3.5em -3.5em 3.4em Red, 3.5em 3.5em 3.4em Gold, -3.6em 3.5em 3.4em Lime, -3.7em -3.7em 3.20em Blue;
+   }
+   25% {
+    box-shadow: 3.5em -3.5em 3.4em Blue, 3.5em 3.5em 3.4em Red, -3.6em 3.5em 3.4em Gold, -3.7em -3.7em 3.20em Lime;
+   }
+   50% {
+    box-shadow: 3.5em -3.5em 3.4em Lime, 3.5em 3.5em 3.4em Blue, -3.6em 3.5em 3.4em Red, -3.7em -3.7em 3.20em Gold;
+   }
+   75% {
+    box-shadow: 3.5em -3.5em 3.4em Gold, 3.5em 3.5em 3.4em Lime, -3.6em 3.5em 3.4em Blue, -3.7em -3.7em 3.20em Red;
+   }
+   100% {
+    box-shadow: 3.5em -3.5em 3.4em Red, 3.5em 3.5em 3.4em Gold, -3.6em 3.5em 3.4em Lime, -3.7em -3.7em 3.20em Blue;
+   }
+  } 
+  </style>
+
+  <script>
+  /* 3xHolz */
+
+  var UhrTimerID = null;
+
+  // Zeit anzeigen
+  function ZeigeZeit() {
+   var Jetzt = new Date();
+   document.getElementById("Uhrstunden").value = ZZ(Jetzt.getHours());
+   document.getElementById("Uhrminuten").value = ZZ(Jetzt.getMinutes());
+   document.getElementById("Uhrsekunden").value = ZZ(Jetzt.getSeconds());
+   UhrTimerID = setTimeout("ZeigeZeit()", 1000); // 1 sec.
+  
+   var Jetzt = new Date();
+   document.getElementById("Alarmstunden").value = ZZ(Jetzt.getHours());
+   document.getElementById("Alarmminuten").value = ZZ(Jetzt.getHours());
+   document.getElementById("Alarmsekunden").value = ZZ(Jetzt.getHours());
+  
+   var st = document.getElementById("Uhrstunden").value;
+   var mi = document.getElementById("Uhrminuten").value;
+   var se = document.getElementById("Uhrsekunden").value;
+   var ast = document.getElementById("Alarmstunden").value;
+   var ami = document.getElementById("Alarmminuten").value;
+   var ase = document.getElementById("Alarmsekunden").value;
+
+   if (st == ast) {
+    if (mi == ami) {
+     if (se == ase) {
+      if (document.getElementById("Signal").checked) {
+       document.getElementById("sound").loop = false;
+       document.getElementById("sound").play();
+      }
+      if (document.getElementById("Lichter").checked) {
+       document.getElementById("tabelle").classList.add("LichterStart");
+      }
+      window.setTimeout(function () {
+       StopAlarm();
+      },2000); // 2 sec.
+     }
+    }
+   }
+  }
+
+  // Alarm Stopp
+  function StopAlarm() {
+   document.getElementById("sound").pause();
+   document.getElementById("tabelle").classList.remove("LichterStart");
+  }
+
+  // Zwei Ziffern
+  function ZZ(x) {
+   return(((x < 10) ? "0" : "") + x);
+  }
+
+  window.addEventListener("load", ZeigeZeit)
+
+  </script>
+
+ </head>
+<body>
+
+<form>
+ <table id="tabelle">
+
+  </tr>
+  <tr>
+   <td colspan="2">
+
+    <span title="App-Titel">
+     <input type="text" id="alarm" value="      3x Holz !" readonly="readonly" tabindex="-1000">
+    </span>
+
+   </td>
+  </tr>
+
+  <tr>
+   <td title="Aktuelle Uhrzeit">
+
+    Uhrzeit:
+    <input type="text" id="Uhrstunden" readonly="readonly" tabindex="-1000"> :
+    <input type="text" id="Uhrminuten" readonly="readonly" tabindex="-1000"> :
+    <input type="text" id="Uhrsekunden" readonly="readonly" tabindex="-1000">
+
+   </td>
+  <tr>
+   <td title="Alarm">
+
+    Alarm_:
+     <input type="text" id="Alarmstunden" readonly="readonly" tabindex="-1000"> :
+     <input type="text" id="Alarmminuten" readonly="readonly" tabindex="-1000"> :
+     <input type="text" id="Alarmsekunden" readonly="readonly" tabindex="-1000">
+
+   </td>
+  </tr>
+
+   <tr>
+    <td title="Setup">
+
+     <span title="Licht einschalten">
+      <input type="checkbox" name="option[]" id="Lichter" checked="checked"> <label for="Lichter">Licht</label>
+     </span>
+
+     <span title="Ton abspielen">
+      <input type="checkbox" name="option[]" id="Signal"> <label for="Signal">Ton</label>
+     </span>
+
+    </td>
+   </tr>
+
+ </table>
+</form>
+
+<audio id="sound" loop="false">
+ <source src="./3xHolz.mp3" type="audio/mpeg">
+</audio>
+
+</body>
+</html> 
